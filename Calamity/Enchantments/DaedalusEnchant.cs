@@ -74,13 +74,13 @@ Effects of Scuttler's Jewel and Permafrost's Concoction");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusMinion) && player.whoAmI == Main.myPlayer)
             {
-                if (player.FindBuffIndex(calamity.Find<ModBuff>("DaedalusCrystal").Type) == -1)
+                if (player.FindBuffIndex(calamity.Find<ModBuff>("DaedalusCrystalBuff").Type) == -1)
                 {
-                    player.AddBuff(calamity.Find<ModBuff>("DaedalusCrystal").Type, 3600, true);
+                    player.AddBuff(calamity.Find<ModBuff>("DaedalusCrystalBuff").Type, 3600, true);
                 }
                 if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("DaedalusCrystal").Type] < 1)
                 {
-                    Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("DaedalusCrystal").Type, (int)(95f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
+                    Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("DaedalusCrystal").Type, (int)(95f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
                 }
             }
 
@@ -99,7 +99,6 @@ Effects of Scuttler's Jewel and Permafrost's Concoction");
 
             recipe.AddIngredient(Mod.Find<ModItem>("SnowRuffianEnchant").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("PermafrostsConcoction").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("CrystalBlade").Type);
 
             recipe.AddTile(TileID.CrystalBall);
             recipe.Register();

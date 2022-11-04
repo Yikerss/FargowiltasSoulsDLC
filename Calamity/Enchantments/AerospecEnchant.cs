@@ -62,9 +62,9 @@ Effects of Gladiator's Locket and Unstable Prism");
                 calamity.Call("SetSetBonus", player, "aerospec_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Valkyrie").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ValkyrieBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("Valkyrie").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("ValkyrieBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("Valkyrie").Type] < 1)
                     {

@@ -23,7 +23,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 @"'The former seas have energized you…'
 When using any weapon you have a 10% chance to throw a returning seashell projectile
 This seashell does true damage and does not benefit from any damage class
-Summons a sea urchin to protect you
+Summons a clam to protect you
 Effects of Ocean's Crest and Luxor's Gift");
         }
 
@@ -55,23 +55,6 @@ Effects of Ocean's Crest and Luxor's Gift");
             //all
             calamity.Call("SetSetBonus", player, "victide", true);
 
-            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.UrchinMinion))
-            {
-                //summon
-                calamity.Call("SetSetBonus", player, "victide_summon", true);
-                if (player.whoAmI == Main.myPlayer)
-                {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Urchin").Type) == -1)
-                    {
-                        player.AddBuff(calamity.Find<ModBuff>("Urchin").Type, 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("Urchin").Type] < 1)
-                    {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("Urchin").Type, (int)(7f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
-                    }
-                }
-            }
-
             calamity.Find<ModItem>("OceanCrest").UpdateAccessory(player, hideVisual);
 
             //calamity.GetItem("DeepDiver").UpdateAccessory(player, hideVisual);
@@ -79,6 +62,7 @@ Effects of Ocean's Crest and Luxor's Gift");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.LuxorGift))
                 calamity.Find<ModItem>("LuxorsGift").UpdateAccessory(player, hideVisual);
+
         }
 
         public override void AddRecipes()

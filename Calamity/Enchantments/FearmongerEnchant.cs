@@ -68,7 +68,7 @@ Effects of Spectral Veil and Statis' Void Sash");
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(calamity.Find<ModItem>("FearmongerGreathelm").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("FearmongerPlatemail").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("FearmongerPlateMail").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("FearmongerGreaves").Type);
 
             recipe.AddIngredient(calamity.Find<ModItem>("TheEvolution").Type);

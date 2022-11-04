@@ -63,9 +63,9 @@ Effects of Profaned Soul Crystal");
         
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("RedDevil").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("DemonshadeSetDevilBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("RedDevil").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("DemonshadeSetDevilBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("RedDevil").Type] < 1)
                     {

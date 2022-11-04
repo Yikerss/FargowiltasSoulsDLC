@@ -74,14 +74,13 @@ Effects of Eclipse Mirror, Nanotech, Venerated Locket, and Dragon Scales");
             recipe.AddIngredient(calamity.Find<ModItem>("VeneratedLocket").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("DragonScales").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("HellsSun").Type, 10);
-            recipe.AddIngredient(calamity.Find<ModItem>("SylvanSlasher").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("JawsOfOblivion").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("DeepSeaDumbbell").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("TimeBolt").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("Eradicator").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("EclipsesFall").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("Celestus").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("ScartletDevil").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("ScarletDevil").Type);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

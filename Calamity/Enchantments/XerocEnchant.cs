@@ -53,7 +53,7 @@ Effects of The Community");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.XerocEffects))
             {
-                calamity.Call("SetSetBonus", player, "xeroc", true);
+                calamity.Call("SetSetBonus", player, "empyrean", true);
             }
 
             //the community
@@ -66,9 +66,9 @@ Effects of The Community");
 
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(calamity.Find<ModItem>("XerocMask").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("XerocPlatemail").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("XerocCuisses").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("EmpyreanMask").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("EmpyreanCloak").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("EmpyreanCuisses").Type);
 
             recipe.AddIngredient(calamity.Find<ModItem>("TheCommunity").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("ElephantKiller").Type);

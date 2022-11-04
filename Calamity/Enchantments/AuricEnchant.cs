@@ -96,13 +96,13 @@ Effects of Heart of the Elements and The Sponge");
                 if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
                 {
                     calamity.Call("SetSetBonus", player, "silva_summon", true);
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystal").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystalBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystal").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystalBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(3000.0 * (double)player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(3000.0 * (double)player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
 
@@ -132,7 +132,7 @@ Effects of Heart of the Elements and The Sponge");
                         {
                             num5 = 10;
                         }
-                        int num6 = (int)(35f * player.GetDamage(DamageClass.Summon).Multiplicative * 5f / 3f + player.GetDamage(DamageClass.Summon).Multiplicative * 0.46f * (num5 - 1));
+                        int num6 = (int)(35f * player.GetDamage(DamageClass.Summon).Additive * 5f / 3f + player.GetDamage(DamageClass.Summon).Additive * 0.46f * (num5 - 1));
                         Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
                         Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
                         Vector2 value3 = Main.MouseWorld - value;
@@ -194,7 +194,7 @@ Effects of Heart of the Elements and The Sponge");
                             int num14 = num13;
                             num13 = Projectile.NewProjectile(player.GetSource_Misc(""),value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                             num14 = num13;
@@ -206,7 +206,7 @@ Effects of Heart of the Elements and The Sponge");
                         if (num10 != -1 && num11 != -1)
                         {
                             int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, (float)num15, 0f);
+                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, (float)num15, 0f);
                             Main.projectile[num15].localAI[1] = num16;
                             Main.projectile[num15].ai[1] = 1f;
                             Main.projectile[num15].minionSlots = 0f;

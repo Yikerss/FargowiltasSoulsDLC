@@ -79,13 +79,13 @@ Effects of the The Amalgam, Godly Soul Artifact, and Yharim's Gift");
                 calamity.Call("SetSetBonus", player, "silva_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystal").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystalBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystal").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystalBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(1500.0 * (double)player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(1500.0 * (double)player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
             }

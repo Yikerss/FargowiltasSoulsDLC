@@ -68,13 +68,13 @@ Rage activates when you are damaged");
                 calamity.Call("SetSetBonus", player, "reaver_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ReaverOrb").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ReaverOrbBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("ReaverOrb").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("ReaverOrbBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("ReaverOrb").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("ReaverOrb").Type, (int)(80f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("ReaverOrb").Type, (int)(80f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
             }
@@ -91,7 +91,6 @@ Rage activates when you are damaged");
             recipe.AddIngredient(calamity.Find<ModItem>("ReaverCuisses").Type);
 
             recipe.AddIngredient(calamity.Find<ModItem>("SandSharknadoStaff").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("Triploon").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("MagnaStriker").Type);
 
             recipe.AddTile(TileID.CrystalBall);

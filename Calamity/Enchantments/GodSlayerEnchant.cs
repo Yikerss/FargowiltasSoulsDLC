@@ -86,7 +86,7 @@ Effects of the Nebulous Core and Draedon's Heart");
                         int whoAmI = player.whoAmI;
                         int num = calamity.Find<ModProjectile>("MechwormHead").Type;
                         int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num3 = calamity.Find<ModProjectile>("MechwormBody2").Type;
+                        int num3 = calamity.Find<ModProjectile>("MechwormBody").Type;
                         int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
                         for (int i = 0; i < 1000; i++)
                         {
@@ -100,7 +100,7 @@ Effects of the Nebulous Core and Draedon's Heart");
                         {
                             num5 = 10;
                         }
-                        int num6 = (int)(35f * (player.GetDamage(DamageClass.Summon).Multiplicative * 5f / 3f + player.GetDamage(DamageClass.Summon).Multiplicative * 0.46f * (num5 - 1)));
+                        int num6 = (int)(35f * (player.GetDamage(DamageClass.Summon).Additive * 5f / 3f + player.GetDamage(DamageClass.Summon).Additive * 0.46f * (num5 - 1)));
                         Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
                         Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
                         Vector2 value3 = Main.MouseWorld - value;
@@ -162,7 +162,7 @@ Effects of the Nebulous Core and Draedon's Heart");
                             int num14 = num13;
                             num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                             num14 = num13;
@@ -173,7 +173,7 @@ Effects of the Nebulous Core and Draedon's Heart");
                         else if (num10 != -1 && num11 != -1)
                         {
                             int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num15, 0f);
+                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num15, 0f);
                             Main.projectile[num15].localAI[1] = num16;
                             Main.projectile[num15].ai[1] = 1f;
                             Main.projectile[num15].minionSlots = 0f;

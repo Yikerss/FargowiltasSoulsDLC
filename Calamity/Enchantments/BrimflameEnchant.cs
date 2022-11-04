@@ -61,7 +61,7 @@ However, this comes at the cost of rapid life loss and no mana regeneration");
 
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(calamity.Find<ModItem>("BrimflameCowl").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BrimflameScowl").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("BrimflameRobes").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("BrimflameBoots").Type);
 

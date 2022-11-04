@@ -86,7 +86,6 @@ Effects of Scuttler's Jewel");
             recipe.AddIngredient(calamity.Find<ModItem>("SnowRuffianGreaves").Type);
 
             recipe.AddIngredient(calamity.Find<ModItem>("ScuttlersJewel").Type);
-            recipe.AddIngredient(calamity.Find<ModItem>("Waraxe").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("TundraLeash").Type);
 
             recipe.AddTile(TileID.DemonAltar);

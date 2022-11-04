@@ -21,9 +21,8 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
             DisplayName.SetDefault("Mollusk Enchantment");
             Tooltip.SetDefault(
 @"'The world is your oyster'
-Two shellfishes aid you in combat
 When using any weapon you have a 10% chance to throw a returning seashell projectile
-Summons a sea urchin to protect you
+Summons multiple clams to protect you
 Effects of Giant Pearl and Aquatic Emblem 
 Effects of Ocean's Crest and Luxor's Gift");
         }
@@ -52,25 +51,7 @@ Effects of Ocean's Crest and Luxor's Gift");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
-
-            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ShellfishMinion))
-            {
-                //set bonus clams
-                calamity.Call("SetSetBonus", player, "mollusk", true);
-                player.maxMinions += 4;
-                if (player.whoAmI == Main.myPlayer)
-                {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Shellfish").Type) == -1)
-                    {
-                        player.AddBuff(calamity.Find<ModBuff>("Shellfish").Type, 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("Shellfish").Type] < 2)
-                    {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("Shellfish").Type, (int)(1500.0 * (double)player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
-                    }
-                }
-            }
-
+          
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GiantPearl))
             {
                 calamity.Find<ModItem>("GiantPearl").UpdateAccessory(player, hideVisual);

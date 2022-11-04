@@ -81,16 +81,16 @@ Effects of Hallowed Rune and Ethereal Extorter");
                 calamity.Call("ataxiaBlaze", player, true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("AtaxiaSummonSetBuff").Type) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("HydrothermicVentBuff").Type) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("HydrothermicVent").Type, 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("HydrothermicVentBuff").Type, 3600, true);
                     }
                     if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("HydrothermicVent").Type] < 1)
                     {
                         Vector2 vec = new Vector2(player.Center.X, player.Center.Y);
                         Vector2 floatVec = new Vector2(0f, -1f);
 
-                        Projectile.NewProjectile(player.GetSource_Misc(""), vec, floatVec, calamity.Find<ModProjectile>("HydrothermicVent").Type, (int)(190f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""), vec, floatVec, calamity.Find<ModProjectile>("HydrothermicVent").Type, (int)(190f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
             }
