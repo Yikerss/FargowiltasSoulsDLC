@@ -5,13 +5,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
 using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Pets;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Armor.Vanity;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -19,7 +12,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -42,44 +35,27 @@ Summons a god-eating mechworm to fight for you
 While at full HP all of your rogue stats are boosted by 10%
 If you take over 80 damage in one hit you will be given extra immunity frames
 Effects of the Nebulous Core and Draedon's Heart");
-            DisplayName.AddTranslation(GameCulture.Chinese, "弑神者魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'足以屠神的力量存于你的体内...'
-如果一次攻击将置你于死地，则改为你存活下来并具有150点生命值
-此效果45秒内只能被触发一次
-一次性受到超过80点伤害使你放出一群高伤害的弑神飞镖
-如果一次攻击将对你造成少于80点伤害，则它改为对你造成1点伤害
-的远程暴击有几率再次暴击，造成四倍原有伤害
-你的远程武器射击时有概率发射一枚弑神榴霰弹，击中敌人后碎成弹片
-魔法武器攻击敌人会释放出弑神者火焰和治疗火焰
-受到伤害时你会放出弑神者魔爆
-造成伤害时召唤弑神者幻灵
-召唤一条虚空吞噬者为你而战
-生命值全满时所有盗贼属性增加10%
-如果一次攻击对你造成了超过80伤害，你获得额外的无敌帧
-拥有星云之核和嘉登之心的效果
-召唤迷你吞噬者宠物");
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(100, 108, 156);
+                    tooltipLine.OverrideColor = new Color(100, 108, 156);
                 }
             }
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 10;
-            item.value = 10000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 10000000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -101,17 +77,17 @@ Effects of the Nebulous Core and Draedon's Heart");
                 calamity.Call("SetSetBonus", player, "godslayer_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.BuffType("Mechworm")) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Mechworm").Type) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("Mechworm"), 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("Mechworm").Type, 3600, true);
                     }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("MechwormHead")] < 1)
+                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("MechwormHead").Type] < 1)
                     {
                         int whoAmI = player.whoAmI;
-                        int num = calamity.ProjectileType("MechwormHead");
-                        int num2 = calamity.ProjectileType("MechwormBody");
-                        int num3 = calamity.ProjectileType("MechwormBody2");
-                        int num4 = calamity.ProjectileType("MechwormTail");
+                        int num = calamity.Find<ModProjectile>("MechwormHead").Type;
+                        int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
+                        int num3 = calamity.Find<ModProjectile>("MechwormBody2").Type;
+                        int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
                         for (int i = 0; i < 1000; i++)
                         {
                             if (Main.projectile[i].active && Main.projectile[i].owner == whoAmI && (Main.projectile[i].type == num || Main.projectile[i].type == num4 || Main.projectile[i].type == num2 || Main.projectile[i].type == num3))
@@ -124,7 +100,7 @@ Effects of the Nebulous Core and Draedon's Heart");
                         {
                             num5 = 10;
                         }
-                        int num6 = (int)(35f * (player.minionDamage * 5f / 3f + player.minionDamage * 0.46f * (num5 - 1)));
+                        int num6 = (int)(35f * (player.GetDamage(DamageClass.Summon).Multiplicative * 5f / 3f + player.GetDamage(DamageClass.Summon).Multiplicative * 0.46f * (num5 - 1)));
                         Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
                         Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
                         Vector2 value3 = Main.MouseWorld - value;
@@ -182,22 +158,22 @@ Effects of the Nebulous Core and Draedon's Heart");
                             num8 = 0f;
                             value.X = Main.mouseX + Main.screenPosition.X;
                             value.Y = Main.mouseY + Main.screenPosition.Y;
-                            int num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormHead"), num6, 1f, whoAmI, 0f, 0f);
+                            int num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormHead").Type, num6, 1f, whoAmI, 0f, 0f);
                             int num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody2"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormTail"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormTail").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                         }
                         else if (num10 != -1 && num11 != -1)
                         {
-                            int num15 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody"), num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody2"), num6, 1f, whoAmI, num15, 0f);
+                            int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
+                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num15, 0f);
                             Main.projectile[num15].localAI[1] = num16;
                             Main.projectile[num15].ai[1] = 1f;
                             Main.projectile[num15].minionSlots = 0f;
@@ -216,30 +192,30 @@ Effects of the Nebulous Core and Draedon's Heart");
             
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.NebulousCore))
             {
-                calamity.GetItem("NebulousCore").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("NebulousCore").UpdateAccessory(player, hideVisual);
             }
 
             //draedons heart
-            calamity.GetItem("DraedonsHeart").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("DraedonsHeart").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyGodslayerHelmet");
-            recipe.AddIngredient(ModContent.ItemType<GodSlayerChestplate>());
-            recipe.AddIngredient(ModContent.ItemType<GodSlayerLeggings>());
-            recipe.AddIngredient(ModContent.ItemType<NebulousCore>());
-            recipe.AddIngredient(ModContent.ItemType<DimensionalSoulArtifact>());
-            recipe.AddIngredient(ModContent.ItemType<DraedonsHeart>());
+            recipe.AddIngredient(calamity.Find<ModItem>("GodSlayerHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("GodSlayerChestplate").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("GodSlayerLeggings").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("NebulousCore").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DimensionalSoulArtifact").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DraedonsHeart").Type);
 
 
             recipe.AddTile(calamity, "DraedonsForge");
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

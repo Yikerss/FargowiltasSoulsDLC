@@ -4,11 +4,6 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Magic;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -16,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -39,42 +34,27 @@ Summons a life aura around you that damages nearby enemies
 After every 25 rogue critical hits you will gain 5 seconds of damage immunity
 While under the effects of a debuff you gain 10% increased rogue damage
 Effects of Blazing Core and Dark Sun Ring");
-            DisplayName.AddTranslation(GameCulture.Chinese, "龙蒿魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'布拉洛的不死之力从你身上流过...'
-增加红心拾取范围
-敌人死亡时有几率掉落更多红心
-受到伤害时你有25%的几率获得生命恢复的增益
-按“Y”键将自已以生命能量包裹，大大降低你受到的接触伤害，持续10秒
-远程暴击造成叶片爆炸
-远程弹幕在因击中敌人而消失时有几率分裂为生命能量
-每五次暴击时发射叶片风暴
-魔法弹幕击中敌人时有50%的几率治疗你
-召唤围绕你的生命光环，对敌人造成伤害
-使用盗贼武器暴击敌人25次时你会获得5秒无敌时间
-若你受到减益影响，则提示10%暴击率
-拥有渎火核心和蚀日尊戒的效果");
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(169, 106, 52);
+                    tooltipLine.OverrideColor = new Color(169, 106, 52);
                 }
             }
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 10;
-            item.value = 3000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 3000000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -91,27 +71,27 @@ Effects of Blazing Core and Dark Sun Ring");
                 calamity.Call("SetSetBonus", player, "tarragon_rogue", true);
             }
             
-            calamity.GetItem("BlazingCore").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("BlazingCore").UpdateAccessory(player, hideVisual);
             //dark sun ring
-            calamity.GetItem("DarkSunRing").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("DarkSunRing").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyTarragonHelmet");
-            recipe.AddIngredient(ModContent.ItemType<TarragonBreastplate>());
-            recipe.AddIngredient(ModContent.ItemType<TarragonLeggings>());
-            recipe.AddIngredient(ModContent.ItemType<BlazingCore>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSunRing>());
-            recipe.AddIngredient(ModContent.ItemType<TrueTyrantYharimsUltisword>());
+            recipe.AddIngredient(calamity.Find<ModItem>("TarragonHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("TarragonBreastplate").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("TarragonLeggings").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("BlazingCore").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DarkSunRing").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("TrueTyrantYharimsUltisword").Type);
 
             recipe.AddTile(TileID.LunarCraftingStation);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

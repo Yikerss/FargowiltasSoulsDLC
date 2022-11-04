@@ -9,7 +9,7 @@ namespace FargowiltasSoulsDLC.Calamity.Forces
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -25,44 +25,34 @@ Effects of Blazing Core, Dark Sun Ring, and Core of the Blood God
 Effects of Nebulous Core and Draedon's Heart
 Effects of the The Amalgam and Godly Soul Artifact
 Effects of Yharim's Gift, Heart of the Elements, and The Sponge");
-            DisplayName.AddTranslation(GameCulture.Chinese, "晋升之力");
-            Tooltip.AddTranslation(GameCulture.Chinese,
-@"''
-拥有龙蒿，血炎和硫火的套装效果
-拥有弑神者，始源林海和古圣金源的套装效果
-拥有渎火核心，蚀日尊戒和血神核心的效果
-拥有灾劫之尖啸，星云核心和嘉登之心的效果
-拥有聚合之脑，痴愚金龙干细胞和圣魂神物的效果
-拥有魔君的礼物，元素之心和化绵留香石的效果");
-
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 11;
-            item.value = 600000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = 600000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            mod.GetItem("TarragonEnchant").UpdateAccessory(player, hideVisual);
-            mod.GetItem("BloodflareEnchant").UpdateAccessory(player, hideVisual);
-            mod.GetItem("GodSlayerEnchant").UpdateAccessory(player, hideVisual);
-            mod.GetItem("SilvaEnchant").UpdateAccessory(player, hideVisual);
-            mod.GetItem("AuricEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("TarragonEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("BloodflareEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("GodSlayerEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("SilvaEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("AuricEnchant").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(null, "TarragonEnchant");
             recipe.AddIngredient(null, "BloodflareEnchant");
@@ -70,9 +60,8 @@ Effects of Yharim's Gift, Heart of the Elements, and The Sponge");
             recipe.AddIngredient(null, "SilvaEnchant");
             recipe.AddIngredient(null, "AuricEnchant");
 
-            recipe.AddTile(ModLoader.GetMod("Fargowiltas").TileType("CrucibleCosmosSheet"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
     }
 }

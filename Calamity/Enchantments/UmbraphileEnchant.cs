@@ -4,9 +4,6 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Rogue;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -14,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -28,23 +25,16 @@ Rogue weapons have a chance to create explosions on hit
 Stealth strikes always create an explosion
 Penumbra potions always build stealth at max effectiveness
 Effects of Thief's Dime, Vampiric Talisman, and Momentum Capacitor");
-            DisplayName.AddTranslation(GameCulture.Chinese, "日影魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"''
-盗贼武器击中敌人时概率产生爆炸
-暴击总是会产生爆炸
-半影药剂总是发挥最大功效
-拥有盗贼铸币，吸血鬼符咒和动量电容器的效果");
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 300000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = 300000;
         }
 
         /*public override void ModifyTooltips(List<TooltipLine> list)
@@ -63,27 +53,28 @@ Effects of Thief's Dime, Vampiric Talisman, and Momentum Capacitor");
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
             calamity.Call("SetSetBonus", player, "umbraphile", true);
-            calamity.GetItem("ThiefsDime").UpdateAccessory(player, hideVisual);
-            calamity.GetItem("VampiricTalisman").UpdateAccessory(player, hideVisual);
-            calamity.GetItem("MomentumCapacitor").UpdateAccessory(player, hideVisual);
+
+            calamity.Find<ModItem>("ThiefsDime").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("VampiricTalisman").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("MomentumCapacitor").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<UmbraphileHood>());
-            recipe.AddIngredient(ModContent.ItemType<UmbraphileRegalia>());
-            recipe.AddIngredient(ModContent.ItemType<UmbraphileBoots>());
-            recipe.AddIngredient(ModContent.ItemType<ThiefsDime>());
-            recipe.AddIngredient(ModContent.ItemType<VampiricTalisman>());
-            recipe.AddIngredient(ModContent.ItemType<MomentumCapacitor>());
+            recipe.AddIngredient(calamity.Find<ModItem>("UmbraphileHood").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("UmbraphileRegalia").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("UmbraphileBoots").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("ThiefsDime").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("VampiricTalisman").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("MomentumCapacitor").Type);
             
             recipe.AddTile(TileID.CrystalBall);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

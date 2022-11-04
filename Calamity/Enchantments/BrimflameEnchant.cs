@@ -4,14 +4,6 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Fishing.BrimstoneCragCatches;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Fishing.FishingRods;
-using CalamityMod.Items.Pets;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -19,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -32,13 +24,6 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 Press Y to trigger a brimflame frenzy effect
 While under this effect, your damage is significantly boosted
 However, this comes at the cost of rapid life loss and no mana regeneration");
-            DisplayName.AddTranslation(GameCulture.Chinese, "硫火魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"''
-按Y键进入硫火狂暴模式
-在此模式下，你造成的伤害会显著增加
-然而这是以快速的生命流失和魔力再生速度归零为代价的
-召唤小硫火灵宠物");
         }
 
         /*public override void ModifyTooltips(List<TooltipLine> list)
@@ -54,12 +39,12 @@ However, this comes at the cost of rapid life loss and no mana regeneration");
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 600000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = 600000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -74,19 +59,18 @@ However, this comes at the cost of rapid life loss and no mana regeneration");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<BrimflameScowl>());
-            recipe.AddIngredient(ModContent.ItemType<BrimflameRobes>());
-            recipe.AddIngredient(ModContent.ItemType<BrimflameBoots>());
+            recipe.AddIngredient(calamity.Find<ModItem>("BrimflameCowl").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BrimflameRobes").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BrimflameBoots").Type);
 
-            recipe.AddIngredient(ModContent.ItemType<Butcher>());
-            recipe.AddIngredient(ModContent.ItemType<IgneousExaltation>());
-            recipe.AddIngredient(ModContent.ItemType<BlazingStar>());
+            recipe.AddIngredient(calamity.Find<ModItem>("Butcher").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("IgneousExaltation").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BlazingStar").Type);
 
             recipe.AddTile(TileID.CrystalBall);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

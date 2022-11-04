@@ -4,13 +4,6 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Items.Pets;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -18,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -37,37 +30,25 @@ A daedalus crystal floats above you to protect you
 Rogue projectiles throw out crystal shards as they travel
 You can glide to negate fall damage
 Effects of Scuttler's Jewel and Permafrost's Concoction");
-            DisplayName.AddTranslation(GameCulture.Chinese, "代达罗斯魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'冰霜魔法保护着你...'
-你有33%的几率反弹弹幕
-如果你成功反弹了弹幕，你将恢复相当于弹幕伤害1/5的生命值
-当你被击中时释放水晶碎片
-你有10%的几率吸收一次物理伤害或者弹幕
-当你成功吸收了一次攻击后，你将恢复相当于那次攻击的攻击力1/2的生命值
-召唤悬浮的代达罗斯水晶保护你
-盗贼弹幕飞行时释放水晶碎片
-拥有佩码·福洛斯特之秘药和再生冰盾的效果
-召唤小熊，肯德拉和第三贤者宠物");
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 5;
-            item.value = 500000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = 500000;
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(64, 115, 164);
+                    tooltipLine.OverrideColor = new Color(64, 115, 164);
                 }
             }
         }
@@ -88,40 +69,40 @@ Effects of Scuttler's Jewel and Permafrost's Concoction");
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PermafrostPotion))
             {
                 //permafrost concoction
-                calamity.GetItem("PermafrostsConcoction").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("PermafrostsConcoction").UpdateAccessory(player, hideVisual);
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusMinion) && player.whoAmI == Main.myPlayer)
             {
-                if (player.FindBuffIndex(calamity.BuffType("DaedalusCrystal")) == -1)
+                if (player.FindBuffIndex(calamity.Find<ModBuff>("DaedalusCrystal").Type) == -1)
                 {
-                    player.AddBuff(calamity.BuffType("DaedalusCrystal"), 3600, true);
+                    player.AddBuff(calamity.Find<ModBuff>("DaedalusCrystal").Type, 3600, true);
                 }
-                if (player.ownedProjectileCounts[calamity.ProjectileType("DaedalusCrystal")] < 1)
+                if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("DaedalusCrystal").Type] < 1)
                 {
-                    Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("DaedalusCrystal"), (int)(95f * player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
+                    Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("DaedalusCrystal").Type, (int)(95f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
                 }
             }
 
-            mod.GetItem("SnowRuffianEnchant").UpdateAccessory(player, hideVisual);            
+            Mod.Find<ModItem>("SnowRuffianEnchant").UpdateAccessory(player, hideVisual);            
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyDaedalusHelmet");
-            recipe.AddIngredient(ModContent.ItemType<DaedalusBreastplate>());
-            recipe.AddIngredient(ModContent.ItemType<DaedalusLeggings>());
-            recipe.AddIngredient(ModContent.ItemType<SnowRuffianEnchant>());
-            recipe.AddIngredient(ModContent.ItemType<PermafrostsConcoction>());
-            recipe.AddIngredient(ModContent.ItemType<CrystalBlade>());
+            recipe.AddIngredient(calamity.Find<ModItem>("DaedalusHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DaedalusBreastplate").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DaedalusLeggings").Type);
+
+            recipe.AddIngredient(Mod.Find<ModItem>("SnowRuffianEnchant").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("PermafrostsConcoction").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("CrystalBlade").Type);
 
             recipe.AddTile(TileID.CrystalBall);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

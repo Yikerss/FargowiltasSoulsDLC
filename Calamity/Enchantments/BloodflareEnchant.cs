@@ -3,14 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Pets;
+
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -18,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -46,49 +39,27 @@ Magic critical strikes cause flame explosions every 2 seconds
 Summons polterghast mines to circle you
 Rogue critical strikes have a 50% chance to heal you
 Effects of the Core of the Blood God and Eldritch Soul Artifact");
-            DisplayName.AddTranslation(GameCulture.Chinese, "血炎魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'堕落者的灵魂由你支配...'
-按Y键进入硫火狂暴模式
-在此模式下，你造成的伤害会显著增加
-然而这是以快速的生命流失和魔力再生速度归零为代价的
-击中一个生命值低于50%的敌人有几率掉落红心
-击中一个生命值高于50%的敌人有几率掉落魔力星
-血月期间击杀的敌人掉落血珠的概率大幅提高
-真正的近战攻击会治疗你
-使用真正的近战武器打击敌人15次进入鲜血狂怒状态，持续5秒
-此期间近战伤害和暴击率提升25%，来自敌人的接触伤害减半
-此效果有30秒冷却时间
-按下Y键释放噬魂幽花的冤魂摧毁你的敌人
-此效果有30秒冷却时间
-远程武器有几率引发血炎爆炸
-魔法武器有时候会发射灵魂射弹
-魔法武器暴击产生火焰爆炸，两秒钟内至多触发一次
-召唤环绕你的噬魂幽花地雷
-盗贼武器暴击有50%几率治疗你
-拥有血神核心和灾劫之尖啸的效果
-召唤小硫火灵宠物");
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(191, 68, 59);
+                    tooltipLine.OverrideColor = new Color(191, 68, 59);
                 }
             }
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 10;
-            item.value = 3000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 3000000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -109,29 +80,31 @@ Effects of the Core of the Blood God and Eldritch Soul Artifact");
                 calamity.Call("SetSetBonus", player, "bloodflare_summon", true);
             }
 
-            calamity.GetItem("CoreOfTheBloodGod").UpdateAccessory(player, hideVisual);
-            calamity.GetItem("EldritchSoulArtifact").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("CoreOfTheBloodGod").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("EldritchSoulArtifact").UpdateAccessory(player, hideVisual);
             //brimflame
-            mod.GetItem("BrimflameEnchant").UpdateAccessory(player, hideVisual);
+            Mod.Find<ModItem>("BrimflameEnchant").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyBloodflareHelmet");
-            recipe.AddIngredient(ModContent.ItemType<BloodflareBodyArmor>());
-            recipe.AddIngredient(ModContent.ItemType<BloodflareCuisses>());
-            recipe.AddIngredient(ModContent.ItemType<BrimflameEnchant>());
-            recipe.AddIngredient(ModContent.ItemType<CoreOfTheBloodGod>());
-            recipe.AddIngredient(ModContent.ItemType<EldritchSoulArtifact>());
+            recipe.AddIngredient(calamity.Find<ModItem>("BloodflareHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BloodflareBodyArmor").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("BloodflareCuisses").Type);
+
+            Mod mod = ModLoader.GetMod("FargowiltasSoulsDlc");
+
+            recipe.AddIngredient(mod.Find<ModItem>("BrimflameEnchant").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("CoreOfTheBloodGod").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("EldritchSoulArtifact").Type);
 
 
             recipe.AddTile(TileID.LunarCraftingStation);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

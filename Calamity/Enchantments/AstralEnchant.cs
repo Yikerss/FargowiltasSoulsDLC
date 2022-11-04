@@ -4,15 +4,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Fishing.AstralCatches;
-using CalamityMod.Buffs.Pets;
-using CalamityMod.Projectiles.Pets;
+
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -20,7 +12,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -33,32 +25,26 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 Whenever you crit an enemy fallen, hallowed, and astral stars will rain down
 This effect has a 1 second cooldown before it can trigger again
 Effects of the Astral Arcanum and Gravistar Sabaton");
-            DisplayName.AddTranslation(GameCulture.Chinese, "星幻魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'星体感染侵蚀了你...'
-每当你对敌人造成暴击，天空会降落神圣和星辉陨星
-此效果1秒内最多触发一次
-拥有星辉秘术，星神隐壳和引力靴的效果
-召唤噬星体宠物");
+
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 1000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = 1000000;
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(123, 99, 130);
+                    tooltipLine.OverrideColor = new Color(123, 99, 130);
                 }
             }
         }
@@ -68,34 +54,30 @@ Effects of the Astral Arcanum and Gravistar Sabaton");
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AstralStars))
-            {
                 calamity.Call("SetSetBonus", player, "astral", true);
-            }
+            
 
-            calamity.GetItem("AstralArcanum").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("AstralArcanum").UpdateAccessory(player, hideVisual);
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GravistarSabaton))
-            {
-                calamity.GetItem("GravistarSabaton").UpdateAccessory(player, hideVisual);
-            }
+                calamity.Find<ModItem>("GravistarSabaton").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<AstralHelm>());
-            recipe.AddIngredient(ModContent.ItemType<AstralBreastplate>());
-            recipe.AddIngredient(ModContent.ItemType<AstralLeggings>());
-            recipe.AddIngredient(ModContent.ItemType<AstralArcanum>());
-            recipe.AddIngredient(ModContent.ItemType<GravistarSabaton>());
-            recipe.AddIngredient(ModContent.ItemType<UrsaSergeant>());
+            recipe.AddIngredient(calamity.Find<ModItem>("AstralHelm"));
+            recipe.AddIngredient(calamity.Find<ModItem>("AstralBreastplate"));
+            recipe.AddIngredient(calamity.Find<ModItem>("AstralLeggings"));
+            recipe.AddIngredient(calamity.Find<ModItem>("AstralArcanum"));
+            recipe.AddIngredient(calamity.Find<ModItem>("GravistarSabaton"));
+            recipe.AddIngredient(calamity.Find<ModItem>("UrsaSergeant"));
 
             recipe.AddTile(TileID.LunarCraftingStation);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

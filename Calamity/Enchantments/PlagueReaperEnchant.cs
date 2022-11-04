@@ -4,14 +4,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Magic;
 using System;
-using CalamityMod.Projectiles.Rogue;
-using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -19,7 +12,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -32,22 +25,16 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 Enemies receive 10% more damage from ranged projectiles when afflicted by the Plague
 Getting hit causes the plague cinders to rain from above
 Effects of Plague Hive, Plagued Fuel Pack, and The Camper");
-            DisplayName.AddTranslation(GameCulture.Chinese, "瘟疫死神魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"''
-受瘟疫减益作用的敌人会额外受到10%的远程伤害
-受到伤害会使瘟疫残渣从天而降
-拥有瘟疫蜂巢，瘟疫燃料背包，蜜蜂护符和露营者的效果");
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 8;
-            item.value = 300000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Yellow;
+            Item.value = 300000;
         }
 
         /*public override void ModifyTooltips(List<TooltipLine> list)
@@ -82,22 +69,21 @@ Effects of Plague Hive, Plagued Fuel Pack, and The Camper");
                     num7 = num6 / num7;
                     num4 *= num7;
                     num5 *= num7;
-                    int num8 = Projectile.NewProjectile(num2, num3, num4, num5, ModContent.ProjectileType<TheSyringeCinder>(), 40, 4f, player.whoAmI, 0f, 0f);
-                    Main.projectile[num8].Calamity().rogue = false;
+                    int num8 = Projectile.NewProjectile(player.GetSource_Misc(""),num2, num3, num4, num5, calamity.Find<ModProjectile>("TheSyringeCinder").Type, 40, 4f, player.whoAmI, 0f, 0f);
                     Main.projectile[num8].ai[1] = player.position.Y;
                 }
             }
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PlagueHive))
             {
-                calamity.GetItem("PlagueHive").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("PlagueHive").UpdateAccessory(player, hideVisual);
             }
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PlaguedFuelPack))
             {
-                calamity.GetItem("PlaguedFuelPack").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("PlaguedFuelPack").UpdateAccessory(player, hideVisual);
             }
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.TheCamper))
             {
-                calamity.GetItem("TheCamper").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("TheCamper").UpdateAccessory(player, hideVisual);
             }
         }
 
@@ -105,18 +91,18 @@ Effects of Plague Hive, Plagued Fuel Pack, and The Camper");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<PlagueReaperMask>());
-            recipe.AddIngredient(ModContent.ItemType<PlagueReaperVest>());
-            recipe.AddIngredient(ModContent.ItemType<PlagueReaperStriders>());
-            recipe.AddIngredient(ModContent.ItemType<PlagueHive>());
-            recipe.AddIngredient(ModContent.ItemType<PlaguedFuelPack>());
-            recipe.AddIngredient(calamity.ItemType("TheCamper"));
+            recipe.AddIngredient(calamity.Find<ModItem>("PlagueReaperMask").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("PlagueReaperVest").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("PlagueReaperStriders").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("PlagueHive").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("PlaguedFuelPack").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("TheCamper").Type);
 
             recipe.AddTile(TileID.CrystalBall);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

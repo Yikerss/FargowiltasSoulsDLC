@@ -4,15 +4,6 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Pets;
-using CalamityMod.Projectiles.Pets;
-using CalamityMod.Buffs.Pets;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -20,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -36,36 +27,25 @@ Your magic projectiles emit a burst of spore gas on enemy hits
 Summons a reaver orb that emits spore gas when enemies are near
 You emit a cloud of spores when you are hit
 Rage activates when you are damaged");
-            DisplayName.AddTranslation(GameCulture.Chinese, "掠夺者魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'痛苦的死亡等待着你的敌人...'
-近战武器的弹幕会产生爆炸
-使用远程武器时10%的几率发射一枚强力火箭弹
-你的魔法弹幕击中敌人时释放出孢子毒气
-召唤会在敌人接近时释放孢子毒气的掠夺者毒球
-受伤时释放一片孢子云
-受伤时获得掠夺者之怒增益
-拥有传说龟甲的效果
-召唤溅花闪蜓宠物");
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 400000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = 400000;
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(54, 164, 66);
+                    tooltipLine.OverrideColor = new Color(54, 164, 66);
                 }
             }
         }
@@ -76,6 +56,7 @@ Rage activates when you are damaged");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ReaverEffects))
             {
+                calamity.Call("SetSetBonus", player, "reaver", true);
                 calamity.Call("SetSetBonus", player, "reaver_melee", true);
                 calamity.Call("SetSetBonus", player, "reaver_ranged", true);
                 calamity.Call("SetSetBonus", player, "reaver_magic", true);
@@ -87,13 +68,13 @@ Rage activates when you are damaged");
                 calamity.Call("SetSetBonus", player, "reaver_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.BuffType("ReaverOrb")) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ReaverOrb").Type) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("ReaverOrb"), 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("ReaverOrb").Type, 3600, true);
                     }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("ReaverOrb")] < 1)
+                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("ReaverOrb").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("ReaverOrb"), (int)(80f * player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("ReaverOrb").Type, (int)(80f * player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
             }
@@ -103,18 +84,18 @@ Rage activates when you are damaged");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyReaverHelmet");
-            recipe.AddIngredient(ModContent.ItemType<ReaverScaleMail>());
-            recipe.AddIngredient(ModContent.ItemType<ReaverCuisses>());
-            recipe.AddIngredient(ModContent.ItemType<SandSharknadoStaff>());
-            recipe.AddIngredient(ModContent.ItemType<Triploon>());
-            recipe.AddIngredient(ModContent.ItemType<MagnaStriker>());
+            recipe.AddIngredient(calamity.Find<ModItem>("ReaverHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("ReaverScaleMail").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("ReaverCuisses").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("SandSharknadoStaff").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("Triploon").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("MagnaStriker").Type);
 
             recipe.AddTile(TileID.CrystalBall);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

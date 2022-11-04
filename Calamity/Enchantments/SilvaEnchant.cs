@@ -4,11 +4,6 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Pets;
-using CalamityMod.Items.Weapons.Magic;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -17,7 +12,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
         public int dragonTimer = 60;
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -42,45 +37,27 @@ Magic projectiles have a 10% chance to cause a massive explosion on enemy hits
 Summons an ancient leaf prism to blast your enemies with life energy
 Rogue weapons have a faster throwing rate while you are above 90% life
 Effects of the The Amalgam, Godly Soul Artifact, and Yharim's Gift");
-            DisplayName.AddTranslation(GameCulture.Chinese, "始源林海魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'你身上流淌出无尽的生命能量'
-免疫几乎所有减益
-所有弹幕击中敌人时生成林海光球治疗你
-最大跑动速度和加速度提高5%
-如果你的生命值将要降至1以下，则你在10秒钟内不会因为受伤而死亡
-在此期间每当你的生命值将要因为受伤而归零时，你将具有1点生命值但生命值上限减少100
-如果你的最大生命值被降至了400，此效果立即结束。此效果每条生命仅会生效一次
-死去时最大生命值恢复正常
-真正的近战攻击有25%概率造成五倍伤害
-近战弹幕有25%几率眩晕敌人一小会
-提升远程武器的射速
-魔法弹幕击中敌人后有10%几率产生巨大爆炸
-魔法弹幕击中敌人后有10%几率产生巨大爆炸
-生命值高于50%时, 提高盗贼武器攻速
-拥有聚合之脑, 痴愚金龙干细胞，圣魂神物和魔君的礼物的效果
-召唤阿卡托和狐狸宠物");
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(176, 112, 70);
+                    tooltipLine.OverrideColor = new Color(176, 112, 70);
                 }
             }
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 10;
-            item.value = 20000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 20000000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -102,51 +79,52 @@ Effects of the The Amalgam, Godly Soul Artifact, and Yharim's Gift");
                 calamity.Call("SetSetBonus", player, "silva_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.BuffType("SilvaCrystal")) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystal").Type) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("SilvaCrystal"), 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystal").Type, 3600, true);
                     }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("SilvaCrystal")] < 1)
+                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("SilvaCrystal"), (int)(1500.0 * (double)player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(1500.0 * (double)player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.FungalMinion))
             {
-                calamity.GetItem("TheAmalgam").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("TheAmalgam").UpdateAccessory(player, hideVisual);
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GodlySoulArtifact))
             {
-                calamity.GetItem("GodlySoulArtifact").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("GodlySoulArtifact").UpdateAccessory(player, hideVisual);
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.YharimGift))
             {
-                calamity.GetItem("YharimsGift").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("YharimsGift").UpdateAccessory(player, hideVisual);
             }
 
-            calamity.GetItem("DynamoStemCells").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("DynamoStemCells").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnySilvaHelmet");
-            recipe.AddIngredient(ModContent.ItemType<SilvaArmor>());
-            recipe.AddIngredient(ModContent.ItemType<SilvaLeggings>());
-            recipe.AddIngredient(ModContent.ItemType<TheAmalgam>());
-            recipe.AddIngredient(ModContent.ItemType<GodlySoulArtifact>());
-            recipe.AddIngredient(ModContent.ItemType<YharimsGift>());
+            recipe.AddIngredient(calamity.Find<ModItem>("SilvaHelmet").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("SilvaArmor").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("SilvaLeggings").Type);
+
+            recipe.AddIngredient(calamity.Find<ModItem>("TheAmalgam").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("GodlySoulArtifact").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("YharimsGift").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("DynamoStemCells").Type);
 
             recipe.AddTile(calamity, "DraedonsForge");
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

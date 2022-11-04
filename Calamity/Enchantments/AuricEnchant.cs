@@ -3,16 +3,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using CalamityMod.CalPlayer;
 using System;
 using Terraria.Localization;
-using CalamityMod.Items.Armor;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Magic;
+
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -20,7 +13,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -33,31 +26,26 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 All effects from Tarragon, Bloodflare, Godslayer and Silva armor
 All attacks spawn healing auric orbs
 Effects of Heart of the Elements and The Sponge");
-            DisplayName.AddTranslation(GameCulture.Chinese, "古圣金源魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'你的力量能与丛林暴君的力量相媲美...'
-拥有龙蒿, 血炎, 弑神者和始源林海的套装效果
-所有攻击生成圣金源光球治疗玩家
-拥有元素之心和化绵留香石的效果");
+
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 10;
-            item.value = 10000000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 10000000;
         }
 
         public override void ModifyTooltips(List<TooltipLine> list)
         {
             foreach (TooltipLine tooltipLine in list)
             {
-                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                if (tooltipLine.Mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color(217, 142, 67);
+                    tooltipLine.OverrideColor = new Color(217, 142, 67);
                 }
             }
         }
@@ -65,6 +53,7 @@ Effects of Heart of the Elements and The Sponge");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
+
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AuricEffects))
             {
@@ -99,39 +88,38 @@ Effects of Heart of the Elements and The Sponge");
 
             //summon head
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PolterMines))
-            {
                 calamity.Call("SetSetBonus", player, "bloodflare_summon", true);
-            }
+            
 
             if (player.whoAmI == Main.myPlayer)
             {
                 if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
                 {
                     calamity.Call("SetSetBonus", player, "silva_summon", true);
-                    if (player.FindBuffIndex(calamity.BuffType("SilvaCrystal")) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystal").Type) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("SilvaCrystal"), 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystal").Type, 3600, true);
                     }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("SilvaCrystal")] < 1)
+                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
                     {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("SilvaCrystal"), (int)(3000.0 * (double)player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(3000.0 * (double)player.GetDamage(DamageClass.Summon).Multiplicative), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
 
                 if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.MechwormMinion))
                 {
                     calamity.Call("SetSetBonus", player, "godslayer_summon", true);
-                    if (player.FindBuffIndex(calamity.BuffType("Mechworm")) == -1)
+                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Mechworm").Type) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("Mechworm"), 3600, true);
+                        player.AddBuff(calamity.Find<ModBuff>("Mechworm").Type, 3600, true);
                     }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("MechwormHead")] < 1)
+                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("MechwormHead").Type] < 1)
                     {
                         int whoAmI = player.whoAmI;
-                        int num = calamity.ProjectileType("MechwormHead");
-                        int num2 = calamity.ProjectileType("MechwormBody");
-                        int num3 = calamity.ProjectileType("MechwormBody2");
-                        int num4 = calamity.ProjectileType("MechwormTail");
+                        int num = calamity.Find<ModProjectile>("MechwormHead").Type;
+                        int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
+                        int num3 = calamity.Find<ModProjectile>("MechwormBody2").Type;
+                        int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
                         for (int i = 0; i < 1000; i++)
                         {
                             if (Main.projectile[i].active && Main.projectile[i].owner == whoAmI && (Main.projectile[i].type == num || Main.projectile[i].type == num4 || Main.projectile[i].type == num2 || Main.projectile[i].type == num3))
@@ -144,7 +132,7 @@ Effects of Heart of the Elements and The Sponge");
                         {
                             num5 = 10;
                         }
-                        int num6 = (int)(35f * (player.minionDamage * 5f / 3f + player.minionDamage * 0.46f * (num5 - 1)));
+                        int num6 = (int)(35f * player.GetDamage(DamageClass.Summon).Multiplicative * 5f / 3f + player.GetDamage(DamageClass.Summon).Multiplicative * 0.46f * (num5 - 1));
                         Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
                         Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
                         Vector2 value3 = Main.MouseWorld - value;
@@ -202,23 +190,23 @@ Effects of Heart of the Elements and The Sponge");
                             num8 = 0f;
                             value.X = Main.mouseX + Main.screenPosition.X;
                             value.Y = Main.mouseY + Main.screenPosition.Y;
-                            int num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormHead"), num6, 1f, whoAmI, 0f, 0f);
+                            int num13 = Projectile.NewProjectile(player.GetSource_Misc(""),value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormHead").Type, num6, 1f, whoAmI, 0f, 0f);
                             int num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""),value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody2"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                             num14 = num13;
-                            num13 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormTail"), num6, 1f, whoAmI, num14, 0f);
+                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormTail").Type, num6, 1f, whoAmI, num14, 0f);
                             Main.projectile[num14].localAI[1] = num13;
                             Main.projectile[num14].netUpdate = true;
                             return;
                         }
                         if (num10 != -1 && num11 != -1)
                         {
-                            int num15 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody"), num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(value.X, value.Y, num7, num8, calamity.ProjectileType("MechwormBody2"), num6, 1f, whoAmI, (float)num15, 0f);
+                            int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
+                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody2").Type, num6, 1f, whoAmI, (float)num15, 0f);
                             Main.projectile[num15].localAI[1] = num16;
                             Main.projectile[num15].ai[1] = 1f;
                             Main.projectile[num15].minionSlots = 0f;
@@ -237,29 +225,28 @@ Effects of Heart of the Elements and The Sponge");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.WaifuMinions))
             {
-                calamity.GetItem("HeartoftheElements").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("HeartoftheElements").UpdateAccessory(player, hideVisual);
             }
 
             //the sponge
-            calamity.GetItem("Sponge").UpdateAccessory(player, hideVisual);
+            calamity.Find<ModItem>("TheSponge").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddRecipeGroup("FargowiltasSoulsDLC:AnyAuricHelmet");
-            recipe.AddIngredient(ModContent.ItemType<AuricTeslaBodyArmor>());
-            recipe.AddIngredient(ModContent.ItemType<AuricTeslaCuisses>());
-            recipe.AddIngredient(ModContent.ItemType<HeartoftheElements>());
-            recipe.AddIngredient(ModContent.ItemType<Sponge>());
-            recipe.AddIngredient(ModContent.ItemType<ArkoftheCosmos>());
+            recipe.AddIngredient(calamity.Find<ModItem>("AuricTeslaRoyalHelm").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("AuricTeslaBodyArmor").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("AuricTeslaCuisses").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("HeartoftheElements").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("TheSponge").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("ArkoftheCosmos").Type);
 
             recipe.AddTile(calamity, "DraedonsForge");
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

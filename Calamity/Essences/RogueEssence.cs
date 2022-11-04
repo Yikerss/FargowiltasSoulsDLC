@@ -1,12 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Rogue;
 
 namespace FargowiltasSoulsDLC.Calamity.Essences
 {
@@ -14,7 +11,7 @@ namespace FargowiltasSoulsDLC.Calamity.Essences
     {
         private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
 
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)/* tModPorter Suggestion: If you return false for the purposes of manual loading, use the [Autoload(false)] attribute on your class instead */
         {
             return ModLoader.GetMod("CalamityMod") != null;
         }
@@ -42,11 +39,11 @@ namespace FargowiltasSoulsDLC.Calamity.Essences
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 20;
-            item.accessory = true;
-            item.rare = 4;
-            item.value = 150000;
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = 150000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -62,25 +59,24 @@ namespace FargowiltasSoulsDLC.Calamity.Essences
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<RogueEmblem>());
-            recipe.AddIngredient(ModContent.ItemType<GildedDagger>());
-            recipe.AddIngredient(ModContent.ItemType<WebBall>(), 300);
-            recipe.AddIngredient(ModContent.ItemType<BouncingEyeball>());
-            recipe.AddIngredient(ModContent.ItemType<Shroomerang>());
-            recipe.AddIngredient(ModContent.ItemType<MeteorFist>());
-            recipe.AddIngredient(ModContent.ItemType<SludgeSplotch>(), 300);
-            recipe.AddIngredient(ModContent.ItemType<SkyStabber>(), 4);
-            recipe.AddIngredient(ModContent.ItemType<PoisonPack>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<HardenedHoneycomb>(), 300);
-            recipe.AddIngredient(ModContent.ItemType<ShinobiBlade>());
-            recipe.AddIngredient(ModContent.ItemType<InfernalKris>(), 300);
-            recipe.AddIngredient(ModContent.ItemType<AshenStalactite>());
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(calamity.Find<ModItem>("RogueEmblem").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("GildedDagger").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("WebBall").Type, 300);
+            recipe.AddIngredient(calamity.Find<ModItem>("BouncingEyeball").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("Shroomerang").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("MeteorFist").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("SludgeSplotch").Type, 300);
+            recipe.AddIngredient(calamity.Find<ModItem>("SkyStabber").Type, 4);
+            recipe.AddIngredient(calamity.Find<ModItem>("PoisonPack").Type, 3);
+            recipe.AddIngredient(calamity.Find<ModItem>("HardenedHoneycomb").Type, 300);
+            recipe.AddIngredient(calamity.Find<ModItem>("ShinobiBlade").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("InfernalKris").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("AshenStalactite").Type);
             recipe.AddIngredient(ItemID.HallowedBar, 5);
 
             recipe.AddTile(TileID.TinkerersWorkbench);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }
