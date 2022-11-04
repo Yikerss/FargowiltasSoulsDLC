@@ -118,7 +118,7 @@ Effects of Heart of the Elements and The Sponge");
                         int whoAmI = player.whoAmI;
                         int num = calamity.Find<ModProjectile>("MechwormHead").Type;
                         int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num3 = calamity.Find<ModProjectile>("MechwormBody2").Type;
+                        int num3 = calamity.Find<ModProjectile>("MechwormBody").Type;
                         int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
                         for (int i = 0; i < 1000; i++)
                         {
