@@ -4,6 +4,10 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.Buffs.Summon;
+using CalamityMod.Projectiles.Summon;
+using CalamityMod;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -51,7 +55,35 @@ Effects of Ocean's Crest and Luxor's Gift");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
-          
+
+
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ShellfishMinion))
+            {
+
+                player.Calamity().molluskSet = true;
+                player.maxMinions += 4;
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<ShellfishBuff>()) == -1)
+                    {
+                        player.AddBuff(ModContent.BuffType<ShellfishBuff>(), 0xe10, true, false);
+                    }
+
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<Shellfish>()] < 2)
+                    {
+                        Vector2 pos = new Vector2(player.Center.X, player.Center.Y);
+                        Vector2 vel = new Vector2(0, -1);
+                        int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(200f);
+                        Projectile.NewProjectileDirect(source, pos, vel, ModContent.ProjectileType<Shellfish>(), num, 0f, player.whoAmI, 0f, 0f).originalDamage = num;
+                    }
+                }
+                player.Calamity().wearingRogueArmor = true;
+            }
+
+
+
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GiantPearl))
             {
                 calamity.Find<ModItem>("GiantPearl").UpdateAccessory(player, hideVisual);

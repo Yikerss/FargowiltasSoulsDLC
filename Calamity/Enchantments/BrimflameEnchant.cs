@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -51,8 +53,9 @@ However, this comes at the cost of rapid life loss and no mana regeneration");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
+            player1.brimflameSet = true;
             //set bonus
-            calamity.Call("SetSetBonus", player, "brimflame", true);
         }
 
         public override void AddRecipes()

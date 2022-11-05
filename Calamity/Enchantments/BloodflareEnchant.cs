@@ -4,7 +4,6 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
     public class BloodflareEnchant : ModItem

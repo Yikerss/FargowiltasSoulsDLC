@@ -5,7 +5,11 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
 using Terraria.Localization;
-
+using CalamityMod;
+using CalamityMod.CalPlayer;
+using CalamityMod.Buffs.Summon;
+using Terraria.DataStructures;
+using CalamityMod.Projectiles.Summon;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -54,174 +58,47 @@ Effects of Heart of the Elements and The Sponge");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AuricEffects))
             {
-                calamity.Call("SetSetBonus", player, "auric", true);
+                player1.tarraSet = true;
+                player1.tarraSummon = true;
+                player1.bloodflareSet = true;
 
-                //tarragaon
-                calamity.Call("SetSetBonus", player, "tarragon", true);
-                calamity.Call("SetSetBonus", player, "tarragon_melee", true);
-                calamity.Call("SetSetBonus", player, "tarragon_ranged", true);
-                calamity.Call("SetSetBonus", player, "tarragon_magic", true);
-                calamity.Call("SetSetBonus", player, "tarragon_summon", true);
-                calamity.Call("SetSetBonus", player, "tarragon_rogue", true);
-                //bloodflare
-                calamity.Call("SetSetBonus", player, "bloodflare", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_melee", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_ranged", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_magic", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_rogue", true);
-                //godslayer
-                calamity.Call("SetSetBonus", player, "godslayer", true);
-                calamity.Call("SetSetBonus", player, "godslayer_melee", true);
-                calamity.Call("SetSetBonus", player, "godslayer_ranged", true);
-                calamity.Call("SetSetBonus", player, "godslayer_magic", true);
-                calamity.Call("SetSetBonus", player, "godslayer_rogue", true);
-                //silva
-                calamity.Call("SetSetBonus", player, "silva", true);
-                calamity.Call("SetSetBonus", player, "silva_melee", true);
-                calamity.Call("SetSetBonus", player, "silva_ranged", true);
-                calamity.Call("SetSetBonus", player, "silva_magic", true);
-                calamity.Call("SetSetBonus", player, "silva_rogue", true);
+                player1.silvaSet = true;
+                player1.silvaSummon = true;
+                player1.auricSet = true;
+
+                player1.WearingPostMLSummonerSet = true;
+                player.thorns += 3f;
+                player.lavaMax += 240;
+                player.ignoreWater = true;
+                player.crimsonRegen = true;
             }
 
-            //summon head
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PolterMines))
-                calamity.Call("SetSetBonus", player, "bloodflare_summon", true);
-            
+                player1.bloodflareSummon = true;
 
             if (player.whoAmI == Main.myPlayer)
             {
-                if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
+                IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                if (player.FindBuffIndex(ModContent.BuffType<SilvaCrystalBuff>()) == -1)
                 {
-                    calamity.Call("SetSetBonus", player, "silva_summon", true);
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystalBuff").Type) == -1)
+                    player.AddBuff(ModContent.BuffType<SilvaCrystalBuff>(), 0xe10, true, false);
+                }
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<SilvaCrystal>()] < 1)
+                {
+                    int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(0x4b0f);
+                    int index = Projectile.NewProjectile(source, player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<SilvaCrystal>(), num, 0f, Main.myPlayer, -20f, 0f);
+                    if (Utils.IndexInRange<Projectile>(Main.projectile, index))
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystalBuff").Type, 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
-                    {
-                        Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(3000.0 * (double)player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
+                        Main.projectile[index].originalDamage = 0x4b0;
                     }
                 }
-
-                if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.MechwormMinion))
-                {
-                    calamity.Call("SetSetBonus", player, "godslayer_summon", true);
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Mechworm").Type) == -1)
-                    {
-                        player.AddBuff(calamity.Find<ModBuff>("Mechworm").Type, 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("MechwormHead").Type] < 1)
-                    {
-                        int whoAmI = player.whoAmI;
-                        int num = calamity.Find<ModProjectile>("MechwormHead").Type;
-                        int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num3 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            if (Main.projectile[i].active && Main.projectile[i].owner == whoAmI && (Main.projectile[i].type == num || Main.projectile[i].type == num4 || Main.projectile[i].type == num2 || Main.projectile[i].type == num3))
-                            {
-                                Main.projectile[i].Kill();
-                            }
-                        }
-                        int num5 = player.maxMinions;
-                        if (num5 > 10)
-                        {
-                            num5 = 10;
-                        }
-                        int num6 = (int)(35f * player.GetDamage(DamageClass.Summon).Additive * 5f / 3f + player.GetDamage(DamageClass.Summon).Additive * 0.46f * (num5 - 1));
-                        Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
-                        Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
-                        Vector2 value3 = Main.MouseWorld - value;
-                        float num7 = Main.mouseX + Main.screenPosition.X - value.X;
-                        float num8 = Main.mouseY + Main.screenPosition.Y - value.Y;
-                        if (player.gravDir == -1f)
-                        {
-                            num8 = Main.screenPosition.Y + Main.screenHeight - Main.mouseY - value.Y;
-                        }
-                        float num9 = (float)Math.Sqrt((num7 * num7 + num8 * num8));
-                        if ((float.IsNaN(num7) && float.IsNaN(num8)) || (num7 == 0f && num8 == 0f))
-                        {
-                            num7 = player.direction;
-                            num8 = 0f;
-                            num9 = 10f;
-                        }
-                        else
-                        {
-                            num9 = 10f / num9;
-                        }
-                        num7 *= num9;
-                        num8 *= num9;
-                        int num10 = -1;
-                        int num11 = -1;
-                        for (int j = 0; j < 1000; j++)
-                        {
-                            if (Main.projectile[j].active && Main.projectile[j].owner == whoAmI)
-                            {
-                                if (num10 == -1 && Main.projectile[j].type == num)
-                                {
-                                    num10 = j;
-                                }
-                                else if (num11 == -1 && Main.projectile[j].type == num4)
-                                {
-                                    num11 = j;
-                                }
-                                if (num10 != -1 && num11 != -1)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        if (num10 == -1 && num11 == -1)
-                        {
-                            float num12 = Vector2.Dot(value2, value3);
-                            if (num12 > 0f)
-                            {
-                                player.ChangeDir(1);
-                            }
-                            else
-                            {
-                                player.ChangeDir(-1);
-                            }
-                            num7 = 0f;
-                            num8 = 0f;
-                            value.X = Main.mouseX + Main.screenPosition.X;
-                            value.Y = Main.mouseY + Main.screenPosition.Y;
-                            int num13 = Projectile.NewProjectile(player.GetSource_Misc(""),value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormHead").Type, num6, 1f, whoAmI, 0f, 0f);
-                            int num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""),value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
-                            num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
-                            Main.projectile[num14].localAI[1] = num13;
-                            Main.projectile[num14].netUpdate = true;
-                            num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormTail").Type, num6, 1f, whoAmI, num14, 0f);
-                            Main.projectile[num14].localAI[1] = num13;
-                            Main.projectile[num14].netUpdate = true;
-                            return;
-                        }
-                        if (num10 != -1 && num11 != -1)
-                        {
-                            int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, (float)num15, 0f);
-                            Main.projectile[num15].localAI[1] = num16;
-                            Main.projectile[num15].ai[1] = 1f;
-                            Main.projectile[num15].minionSlots = 0f;
-                            Main.projectile[num15].netUpdate = true;
-                            Main.projectile[num16].localAI[1] = num11;
-                            Main.projectile[num16].netUpdate = true;
-                            Main.projectile[num16].minionSlots = 0f;
-                            Main.projectile[num16].ai[1] = 1f;
-                            Main.projectile[num11].ai[0] = num16;
-                            Main.projectile[num11].netUpdate = true;
-                            Main.projectile[num11].ai[1] = 1f;
-                        }
-                    }
-                }      
             }
+
+
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.WaifuMinions))
             {

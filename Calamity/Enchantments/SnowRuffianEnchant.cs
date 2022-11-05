@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -54,7 +56,10 @@ Effects of Scuttler's Jewel");
             //set bonus
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SnowRuffianWings))
             {
-                calamity.Call("SetSetBonus", player, "snowruffian", true);
+                CalamityPlayer player1 = player.Calamity();
+
+                player1.snowRuffianSet = true;
+
                 if (player.controlJump)
             {
                 player.noFallDmg = true;

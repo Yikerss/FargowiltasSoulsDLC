@@ -213,7 +213,6 @@ Effects of the Nebulous Core and Draedon's Heart");
             recipe.AddIngredient(calamity.Find<ModItem>("DimensionalSoulArtifact").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("DraedonsHeart").Type);
 
-
             recipe.AddTile(calamity, "DraedonsForge");
             recipe.Register();
         }

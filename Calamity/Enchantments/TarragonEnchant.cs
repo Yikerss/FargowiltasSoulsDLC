@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -63,12 +65,10 @@ Effects of Blazing Core and Dark Sun Ring");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.TarragonEffects))
             {
-                calamity.Call("SetSetBonus", player, "tarragon", true);
-                calamity.Call("SetSetBonus", player, "tarragon_melee", true);
-                calamity.Call("SetSetBonus", player, "tarragon_ranged", true);
-                calamity.Call("SetSetBonus", player, "tarragon_magic", true);
-                calamity.Call("SetSetBonus", player, "tarragon_summon", true);
-                calamity.Call("SetSetBonus", player, "tarragon_rogue", true);
+                CalamityPlayer player1 = player.Calamity();
+                player1.tarraSet = true;
+                player1.tarraSummon = true;
+
             }
             
             calamity.Find<ModItem>("BlazingCore").UpdateAccessory(player, hideVisual);

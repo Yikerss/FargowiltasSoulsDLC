@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -51,8 +53,10 @@ Effects of Counter Scarf, Mana Overloader, and Fungal Symbiote");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-     
-            calamity.Call("SetSetBonus", player, "statigel", true);
+
+            CalamityPlayer player1 = player.Calamity();
+
+            player1.statigelSet = true;
             player.hasJumpOption_Sail = true;
             player.jumpBoost = true;
 

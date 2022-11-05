@@ -4,6 +4,11 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.Buffs.Summon;
+using CalamityMod.CalPlayer;
+using CalamityMod.Projectiles.Summon;
+using CalamityMod;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -53,25 +58,29 @@ Effects of Gladiator's Locket and Unstable Prism");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            calamity.Call("SetSetBonus", player, "aerospec", true);
-            player.noFallDmg = true;
-
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ValkyrieMinion))
             {
 
-                calamity.Call("SetSetBonus", player, "aerospec_summon", true);
+                CalamityPlayer player1 = player.Calamity();
+                player1.valkyrie = true;
+                player1.aeroSet = true;
+                player.noFallDmg = true;
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ValkyrieBuff").Type) == -1)
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<ValkyrieBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("ValkyrieBuff").Type, 3600, true);
+                        player.AddBuff(ModContent.BuffType<ValkyrieBuff>(), 0xe10, true, false);
                     }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("Valkyrie").Type] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<Valkyrie>()] < 1)
                     {
-                        Vector2 vec = new Vector2(player.Center.X, player.Center.Y);
-                        Vector2 floatVec = new Vector2(0f, -1f);
+                        int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(40f);
 
-                        Projectile.NewProjectile(player.GetSource_Misc(""), vec, floatVec, calamity.Find<ModProjectile>("Valkyrie").Type, 25, 0f, Main.myPlayer, 0f, 0f);
+                        int index = Projectile.NewProjectile(source, player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<Valkyrie>(), num, 0f, Main.myPlayer, 0f, 0f);
+                        if (Utils.IndexInRange<Projectile>(Main.projectile, index))
+                        {
+                            Main.projectile[index].originalDamage = 20;
+                        }
                     }
                 }
             }

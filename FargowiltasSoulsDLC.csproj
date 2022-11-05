@@ -4,10 +4,21 @@
   <PropertyGroup>
     <AssemblyName>FargowiltasSoulsDLC</AssemblyName>
     <TargetFramework>net6.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CalamityMod.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="CalamityMod.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CalamityMod">
+      <HintPath>..\..\..\..\..\..\..\AppData\Roaming\TML-Patcher\Extracted\CalamityMod\CalamityMod.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

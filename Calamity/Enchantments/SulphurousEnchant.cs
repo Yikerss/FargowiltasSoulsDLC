@@ -2,6 +2,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -52,7 +54,9 @@ Effects of Sand Cloak and Alluring Bait");
 
             player.hasJumpOption_Sandstorm = true;
 
-            calamity.Call("SetSetBonus", player, "sulphur", true);
+            CalamityPlayer player1 = player.Calamity();
+
+            player1.sulfurSet = true;
 
             calamity.Find<ModItem>("SandCloak").UpdateAccessory(player, hideVisual);
             calamity.Find<ModItem>("AlluringBait").UpdateAccessory(player, hideVisual);

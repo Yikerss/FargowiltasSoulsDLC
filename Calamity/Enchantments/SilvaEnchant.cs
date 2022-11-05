@@ -4,6 +4,11 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
+using CalamityMod.Buffs.Summon;
+using CalamityMod.CalPlayer;
+using CalamityMod;
+using Terraria.DataStructures;
+using CalamityMod.Projectiles.Summon;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -76,16 +81,28 @@ Effects of the The Amalgam, Godly Soul Artifact, and Yharim's Gift");
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
             {
                 //summon
-                calamity.Call("SetSetBonus", player, "silva_summon", true);
+
+                CalamityPlayer player1 = player.Calamity();
+                player1.silvaSet = true;
+                player1.silvaSummon = true;
+                player1.WearingPostMLSummonerSet = true;
+
+
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("SilvaCrystalBuff").Type) == -1)
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<SilvaCrystalBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("SilvaCrystalBuff").Type, 3600, true);
+                        player.AddBuff(ModContent.BuffType<SilvaCrystalBuff>(), 0xe10, true, false);
                     }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("SilvaCrystal").Type] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<SilvaCrystal>()] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("SilvaCrystal").Type, (int)(1500.0 * (double)player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
+                        int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(1000f);
+                        int index = Projectile.NewProjectile(source, player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<SilvaCrystal>(), num, 0f, Main.myPlayer, -20f, 0f);
+                        if (Utils.IndexInRange<Projectile>(Main.projectile, index))
+                        {
+                            Main.projectile[index].originalDamage = 600;
+                        }
                     }
                 }
             }

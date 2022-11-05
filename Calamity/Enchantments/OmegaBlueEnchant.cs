@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using System.Collections.Generic;
+using CalamityMod;
+using CalamityMod.Cooldowns;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -56,7 +58,25 @@ Effects of the Abyssal Diving Suit and Mutated Truffle");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.OmegaTentacles))
             {
-                calamity.Call("SetSetBonus", player, "omegablue", true);
+                CalamityMod.Cooldowns.CooldownInstance instance;
+                 
+                float armorPenetration = player.GetArmorPenetration<GenericDamageClass>();
+                armorPenetration += 15f;
+                player.maxMinions += 2;
+                CalamityMod.CalPlayer.CalamityPlayer player1 = player.Calamity();
+                player1.wearingRogueArmor = true;
+                player1.omegaBlueSet = true;
+
+                player1.WearingPostMLSummonerSet = true;
+                if (player1.cooldowns.TryGetValue(OmegaBlue.ID, out instance) && (instance.timeLeft > 0x5dc))
+                {
+                    int index = Dust.NewDust(player.position, player.width, player.height, DustID.PurificationPowder, 0f, 0f, 100, Color.Transparent, 1.6f);
+                    Main.dust[index].noGravity = true;
+                    Main.dust[index].noLight = true;
+                    Main.dust[index].fadeIn = 1f;
+                    Dust dust1 = Main.dust[index];
+                    dust1.velocity *= 3f;
+                }
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DivingSuit))
