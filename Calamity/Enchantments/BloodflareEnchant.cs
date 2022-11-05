@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -65,18 +67,21 @@ Effects of the Core of the Blood God and Eldritch Soul Artifact");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.BloodflareEffects))
             {
-                calamity.Call("SetSetBonus", player, "bloodflare", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_melee", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_ranged", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_magic", true);
-                calamity.Call("SetSetBonus", player, "bloodflare_rogue", true);
+             
+                player1.bloodflareSet = true;
+                player1.bloodflareThrowing = true;
+                player1.bloodflareMelee = true;
+                player1.bloodflareMage = true;
+                player1.bloodflareRanged = true;
             }
            
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PolterMines))
             {
-                calamity.Call("SetSetBonus", player, "bloodflare_summon", true);
+                player1.bloodflareSummon = true;
             }
 
             calamity.Find<ModItem>("CoreOfTheBloodGod").UpdateAccessory(player, hideVisual);

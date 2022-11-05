@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -54,10 +56,13 @@ Effects of Sand Cloak and Alluring Bait");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            calamity.Call("SetSetBonus", player, "fathomswarmer", true);
-            if (Collision.DrownCollision(player.position, player.width, player.height, player.gravDir))
+            CalamityPlayer player1 = player.Calamity();
+
+            player1.fathomSwarmer = true;
+            if (Collision.DrownCollision(player.position, player.width, player.height, player.gravDir, false))
             {
-                player.GetDamage(DamageClass.Summon) += 0.1f;
+                StatModifier modifierRef2 = player.GetDamage<SummonDamageClass>();
+                modifierRef2 += 0.3f;
             }
 
             calamity.Find<ModItem>("CorrosiveSpine").UpdateAccessory(player, hideVisual);

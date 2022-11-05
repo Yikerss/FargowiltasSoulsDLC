@@ -4,7 +4,11 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-
+using Terraria.DataStructures;
+using CalamityMod.Buffs.Summon;
+using CalamityMod.Projectiles.Summon;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -57,16 +61,6 @@ Effects of Hallowed Rune and Ethereal Extorter");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AtaxiaEffects))
-            {
-                calamity.Call("SetSetBonus", player, "hydrothermic", true);
-                calamity.Call("SetSetBonus", player, "hydrothermic_melee", true);
-                calamity.Call("SetSetBonus", player, "hydrothermic_ranged", true);
-                calamity.Call("SetSetBonus", player, "hydrothermic_magic", true);
-                calamity.Call("SetSetBonus", player, "hydrothermic_rogue", true);
-            }
-
-
             if (SoulConfig.Instance.calamityToggles.HallowedRune)
                 calamity.Find<ModItem>("HallowedRune").UpdateAccessory(player, hideVisual);
 
@@ -74,23 +68,31 @@ Effects of Hallowed Rune and Ethereal Extorter");
                 calamity.Find<ModItem>("EtherealExtorter").UpdateAccessory(player, hideVisual);
 
 
-            //summon
-            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ChaosMinion))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AtaxiaEffects))
             {
-                calamity.Call("SetSetBonus", player, "hydrothermic_summon", true);
-                calamity.Call("ataxiaBlaze", player, true);
+                CalamityPlayer player1 = player.Calamity();
+                player1.ataxiaBlaze = true;
+                player1.chaosSpirit = true;
+            }
+
+                //summon
+                if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ChaosMinion))
+            {
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("HydrothermicVentBuff").Type) == -1)
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<HydrothermicVentBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("HydrothermicVentBuff").Type, 3600, true);
+                        player.AddBuff(ModContent.BuffType<HydrothermicVentBuff>(), 0xe10, true, false);
                     }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("HydrothermicVent").Type] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<HydrothermicVent>()] < 1)
                     {
-                        Vector2 vec = new Vector2(player.Center.X, player.Center.Y);
-                        Vector2 floatVec = new Vector2(0f, -1f);
-
-                        Projectile.NewProjectile(player.GetSource_Misc(""), vec, floatVec, calamity.Find<ModProjectile>("HydrothermicVent").Type, (int)(190f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
+                        int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(250f);
+                        int index = Projectile.NewProjectile(source, player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<HydrothermicVent>(), num, 0f, Main.myPlayer, 0x26f, 0f);
+                        if (Utils.IndexInRange<Projectile>(Main.projectile, index))
+                        {
+                            Main.projectile[index].originalDamage = 190;
+                        }
                     }
                 }
             }
@@ -105,6 +107,7 @@ Effects of Hallowed Rune and Ethereal Extorter");
             recipe.AddIngredient(calamity.Find<ModItem>("AtaxiaHelm").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("AtaxiaArmor").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("AtaxiaSubligar").Type);
+
             recipe.AddIngredient(calamity.Find<ModItem>("HallowedRune").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("EtherealExtorter").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("BarracudaGun").Type);

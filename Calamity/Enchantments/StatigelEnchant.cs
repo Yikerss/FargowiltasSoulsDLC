@@ -63,6 +63,7 @@ Effects of Counter Scarf, Mana Overloader, and Fungal Symbiote");
             if (SoulConfig.Instance.calamityToggles.FungalSymbiote)
             {
                 calamity.Find<ModItem>("FungalSymbiote").UpdateAccessory(player, hideVisual);
+                calamity.Find<ModItem>("FungalClump").UpdateAccessory(player, hideVisual);
             }
 
             calamity.Find<ModItem>("ManaOverloader").UpdateAccessory(player, hideVisual);

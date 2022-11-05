@@ -4,7 +4,11 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.Localization;
-
+using CalamityMod.CalPlayer;
+using CalamityMod;
+using CalamityMod.Buffs.Summon;
+using CalamityMod.Projectiles.Typeless;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -55,23 +59,31 @@ Effects of Profaned Soul Crystal");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
             //set bonus
-            calamity.Call("SetSetBonus", player, "demonshade", true);
+            player1.dsSetBonus = true;
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.RedDevilMinion))
             {
-        
+
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("DemonshadeSetDevilBuff").Type) == -1)
+                    player1.redDevil = true;
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<DemonshadeSetDevilBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("DemonshadeSetDevilBuff").Type, 3600, true);
+                        player.AddBuff(ModContent.BuffType<DemonshadeSetDevilBuff>(), 0xe10, true, false);
                     }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("DemonshadeRedDevil").Type] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<DemonshadeRedDevil>()] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("DemonshadeRedDevil").Type, 10000, 0f, Main.myPlayer, 0f, 0f);
+                        Vector2 pos = new Vector2(player.Center.X, player.Center.Y);
+                        Vector2 vel = new Vector2(0, -1);
+                        int num = 0x2710;
+                        int num2 = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(0x2710f);
+                        Projectile.NewProjectileDirect(source, pos, vel, ModContent.ProjectileType<DemonshadeRedDevil>(), num2, 0f, Main.myPlayer, 0f, 0f).originalDamage = num;
                     }
                 }
+
             }
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ProfanedSoulCrystal))

@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -52,7 +53,9 @@ Effects of Thief's Dime, Vampiric Talisman, and Momentum Capacitor");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            calamity.Call("SetSetBonus", player, "umbraphile", true);
+            CalamityMod.CalPlayer.CalamityPlayer player1 = player.Calamity();
+
+            player1.umbraphileSet = true;
 
             calamity.Find<ModItem>("ThiefsDime").UpdateAccessory(player, hideVisual);
             calamity.Find<ModItem>("VampiricTalisman").UpdateAccessory(player, hideVisual);

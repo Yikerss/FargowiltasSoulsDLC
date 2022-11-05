@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
 using Terraria.Localization;
+using CalamityMod.CalPlayer;
+using CalamityMod;
+using CalamityMod.CalPlayer.Dashes;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -29,9 +32,9 @@ An attack that would deal 80 damage or less will have its damage reduced to 1
 Your ranged critical hits have a chance to critically hit, causing 4 times the damage
 You have a chance to fire a god killer shrapnel round while firing ranged weapons
 Enemies will release god slayer flames and healing flames when hit with magic attacks
+You can dash in any direction
 Taking damage will cause you to release a magical god slayer explosion
 Hitting enemies will summon god slayer phantoms
-Summons a god-eating mechworm to fight for you
 While at full HP all of your rogue stats are boosted by 10%
 If you take over 80 damage in one hit you will be given extra immunity frames
 Effects of the Nebulous Core and Draedon's Heart");
@@ -62,131 +65,21 @@ Effects of the Nebulous Core and Draedon's Heart");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GodSlayerEffects))
             {
-                calamity.Call("SetSetBonus", player, "godslayer", true);
-                calamity.Call("SetSetBonus", player, "godslayer_melee", true);
-                calamity.Call("SetSetBonus", player, "godslayer_ranged", true);
-                calamity.Call("SetSetBonus", player, "godslayer_magic", true);
-                calamity.Call("SetSetBonus", player, "godslayer_rogue", true);
+                player1.godSlayerThrowing = true;
+                player1.godSlayer = true;
+                player1.godSlayerRanged = true;
             }
             
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.MechwormMinion))
             {
-                //summon
-                calamity.Call("SetSetBonus", player, "godslayer_summon", true);
-                if (player.whoAmI == Main.myPlayer)
+                if (player1.godSlayerDashHotKeyPressed || ((player.dashDelay != 0) && (player1.LastUsedDashID == GodslayerArmorDash.ID)))
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("Mechworm").Type) == -1)
-                    {
-                        player.AddBuff(calamity.Find<ModBuff>("Mechworm").Type, 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("MechwormHead").Type] < 1)
-                    {
-                        int whoAmI = player.whoAmI;
-                        int num = calamity.Find<ModProjectile>("MechwormHead").Type;
-                        int num2 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num3 = calamity.Find<ModProjectile>("MechwormBody").Type;
-                        int num4 = calamity.Find<ModProjectile>("MechwormTail").Type;
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            if (Main.projectile[i].active && Main.projectile[i].owner == whoAmI && (Main.projectile[i].type == num || Main.projectile[i].type == num4 || Main.projectile[i].type == num2 || Main.projectile[i].type == num3))
-                            {
-                                Main.projectile[i].Kill();
-                            }
-                        }
-                        int num5 = player.maxMinions;
-                        if (num5 > 10)
-                        {
-                            num5 = 10;
-                        }
-                        int num6 = (int)(35f * (player.GetDamage(DamageClass.Summon).Additive * 5f / 3f + player.GetDamage(DamageClass.Summon).Additive * 0.46f * (num5 - 1)));
-                        Vector2 value = player.RotatedRelativePoint(player.MountedCenter, true);
-                        Vector2 value2 = Utils.RotatedBy(Vector2.UnitX, player.fullRotation, default(Vector2));
-                        Vector2 value3 = Main.MouseWorld - value;
-                        float num7 = Main.mouseX + Main.screenPosition.X - value.X;
-                        float num8 = Main.mouseY + Main.screenPosition.Y - value.Y;
-                        if (player.gravDir == -1f)
-                        {
-                            num8 = Main.screenPosition.Y + Main.screenHeight - Main.mouseY - value.Y;
-                        }
-                        float num9 = (float)Math.Sqrt((num7 * num7 + num8 * num8));
-                        if ((float.IsNaN(num7) && float.IsNaN(num8)) || (num7 == 0f && num8 == 0f))
-                        {
-                            num7 = player.direction;
-                            num8 = 0f;
-                            num9 = 10f;
-                        }
-                        else
-                        {
-                            num9 = 10f / num9;
-                        }
-                        num7 *= num9;
-                        num8 *= num9;
-                        int num10 = -1;
-                        int num11 = -1;
-                        for (int j = 0; j < 1000; j++)
-                        {
-                            if (Main.projectile[j].active && Main.projectile[j].owner == whoAmI)
-                            {
-                                if (num10 == -1 && Main.projectile[j].type == num)
-                                {
-                                    num10 = j;
-                                }
-                                else if (num11 == -1 && Main.projectile[j].type == num4)
-                                {
-                                    num11 = j;
-                                }
-                                if (num10 != -1 && num11 != -1)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        if (num10 == -1 && num11 == -1)
-                        {
-                            float num12 = Vector2.Dot(value2, value3);
-                            if (num12 > 0f)
-                            {
-                                player.ChangeDir(1);
-                            }
-                            else
-                            {
-                                player.ChangeDir(-1);
-                            }
-                            num7 = 0f;
-                            num8 = 0f;
-                            value.X = Main.mouseX + Main.screenPosition.X;
-                            value.Y = Main.mouseY + Main.screenPosition.Y;
-                            int num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormHead").Type, num6, 1f, whoAmI, 0f, 0f);
-                            int num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
-                            num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num14, 0f);
-                            Main.projectile[num14].localAI[1] = num13;
-                            Main.projectile[num14].netUpdate = true;
-                            num14 = num13;
-                            num13 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormTail").Type, num6, 1f, whoAmI, num14, 0f);
-                            Main.projectile[num14].localAI[1] = num13;
-                            Main.projectile[num14].netUpdate = true;
-                        }
-                        else if (num10 != -1 && num11 != -1)
-                        {
-                            int num15 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, Main.projectile[num11].ai[0], 0f);
-                            int num16 = Projectile.NewProjectile(player.GetSource_Misc(""), value.X, value.Y, num7, num8, calamity.Find<ModProjectile>("MechwormBody").Type, num6, 1f, whoAmI, num15, 0f);
-                            Main.projectile[num15].localAI[1] = num16;
-                            Main.projectile[num15].ai[1] = 1f;
-                            Main.projectile[num15].minionSlots = 0f;
-                            Main.projectile[num15].netUpdate = true;
-                            Main.projectile[num16].localAI[1] = num11;
-                            Main.projectile[num16].netUpdate = true;
-                            Main.projectile[num16].minionSlots = 0f;
-                            Main.projectile[num16].ai[1] = 1f;
-                            Main.projectile[num11].ai[0] = num16;
-                            Main.projectile[num11].netUpdate = true;
-                            Main.projectile[num11].ai[1] = 1f;
-                        }
-                    }
+                    player1.DeferredDashID = GodslayerArmorDash.ID;
+                    player.dash = 0;
                 }
             }
             

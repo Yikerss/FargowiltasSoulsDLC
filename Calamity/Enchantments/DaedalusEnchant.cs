@@ -4,6 +4,11 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.CalPlayer;
+using CalamityMod;
+using CalamityMod.Projectiles.Summon;
+using CalamityMod.Buffs.Summon;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -57,13 +62,14 @@ Effects of Scuttler's Jewel and Permafrost's Concoction");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityPlayer player1 = player.Calamity();
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusEffects))
             {
-                calamity.Call("SetSetBonus", player, "daedalus_melee", true);
-                calamity.Call("SetSetBonus", player, "daedalus_ranged", true);
-                calamity.Call("SetSetBonus", player, "daedalus_magic", true);
-                calamity.Call("SetSetBonus", player, "daedalus_summon", true);
-                calamity.Call("SetSetBonus", player, "daedalus_rogue", true);
+                player1.daedalusAbsorb = true;
+                player1.daedalusReflect = true;
+                player1.daedalusSplit = true;
+                player1.daedalusShard = true;
             }
             
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PermafrostPotion))
@@ -74,14 +80,23 @@ Effects of Scuttler's Jewel and Permafrost's Concoction");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusMinion) && player.whoAmI == Main.myPlayer)
             {
-                if (player.FindBuffIndex(calamity.Find<ModBuff>("DaedalusCrystalBuff").Type) == -1)
+                player.Calamity().daedalusCrystal = true;
+                if (player.whoAmI == Main.myPlayer)
                 {
-                    player.AddBuff(calamity.Find<ModBuff>("DaedalusCrystalBuff").Type, 3600, true);
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<DaedalusCrystalBuff>()) == -1)
+                    {
+                        player.AddBuff(ModContent.BuffType<DaedalusCrystalBuff>(), 0xe10, true, false);
+                    }
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<DaedalusCrystal>()] < 1)
+                    {
+                        Vector2 pos = new Vector2(player.Center.X, player.Center.Y);
+                        Vector2 vel = new Vector2(0, -1);
+                        int num = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(0x5ff);
+                        Projectile.NewProjectileDirect(source, pos, vel, ModContent.ProjectileType<DaedalusCrystal>(), num, 0f, Main.myPlayer, 50f, 0f).originalDamage = 0x5f;
+                    }
                 }
-                if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("DaedalusCrystal").Type] < 1)
-                {
-                    Projectile.NewProjectile(player.GetSource_Misc(""),player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("DaedalusCrystal").Type, (int)(95f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
-                }
+
             }
 
             Mod.Find<ModItem>("SnowRuffianEnchant").UpdateAccessory(player, hideVisual);            

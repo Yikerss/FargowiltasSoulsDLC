@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -54,7 +56,9 @@ Effects of Spectral Veil and Statis' Void Sash");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            calamity.Call("SetSetBonus", player, "fearmonger", true);
+            CalamityPlayer player1 = player.Calamity();
+
+            player1.fearmongerSet = true;
 
             calamity.Find<ModItem>("SpectralVeil").UpdateAccessory(player, hideVisual);
             calamity.Find<ModItem>("TheEvolution").UpdateAccessory(player, hideVisual);

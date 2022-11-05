@@ -4,6 +4,10 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod;
+using CalamityMod.Buffs.Pets;
+using CalamityMod.Projectiles.Typeless;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -54,29 +58,30 @@ Rage activates when you are damaged");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
+            CalamityMod.CalPlayer.CalamityPlayer player1 = player.Calamity();
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ReaverEffects))
             {
-                calamity.Call("SetSetBonus", player, "reaver", true);
-                calamity.Call("SetSetBonus", player, "reaver_melee", true);
-                calamity.Call("SetSetBonus", player, "reaver_ranged", true);
-                calamity.Call("SetSetBonus", player, "reaver_magic", true);
-                calamity.Call("SetSetBonus", player, "reaver_rogue", true);
+                player1.reaverDefense = true;
+                player1.reaverSpeed = true;
             }
-
+            
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ReaverMinion))
             {
-                calamity.Call("SetSetBonus", player, "reaver_summon", true);
+                player1.reaverExplore = true;
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.Find<ModBuff>("ReaverOrbBuff").Type) == -1)
+                    IEntitySource source = player.GetSource_ItemUse(base.Item, null);
+                    if (player.FindBuffIndex(ModContent.BuffType<ReaverOrbBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.Find<ModBuff>("ReaverOrbBuff").Type, 3600, true);
+                        player.AddBuff(ModContent.BuffType<ReaverOrbBuff>(), 0xe10, true, false);
                     }
-                    if (player.ownedProjectileCounts[calamity.Find<ModProjectile>("ReaverOrb").Type] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<ReaverOrb>()] < 1)
                     {
-                        Projectile.NewProjectile(player.GetSource_Misc(""), player.Center.X, player.Center.Y, 0f, -1f, calamity.Find<ModProjectile>("ReaverOrb").Type, (int)(80f * player.GetDamage(DamageClass.Summon).Additive), 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<ReaverOrb>(), 0, 0f, player.whoAmI, 0f, 0f);
                     }
                 }
+
             }
         }
 

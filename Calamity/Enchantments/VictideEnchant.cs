@@ -28,7 +28,7 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
 @"'The former seas have energized you…'
 When using any weapon you have a 10% chance to throw a returning seashell projectile
 This seashell does true damage and does not benefit from any damage class
-Summons a clam to protect you
+The snails will fight for you
 Effects of Ocean's Crest and Luxor's Gift");
         }
 
@@ -72,11 +72,11 @@ Effects of Ocean's Crest and Luxor's Gift");
                         player.AddBuff(ModContent.BuffType<SeaSnailBuff>(), 0xe10, true, false);
                     }
                     IEntitySource source = player.GetSource_ItemUse(base.Item, null);
-                    if (player.ownedProjectileCounts[ModContent.ProjectileType<VictideSeaSnail>()] < 1)
+                    if (player.ownedProjectileCounts[ModContent.ProjectileType<VictideSeaSnail>()] < 2)
                     {
                         Vector2 pos = new Vector2(player.Center.X, player.Center.Y);
                         Vector2 vel = new Vector2(0, -1);
-                        int num = 30;
+                        int num = 50;
                         int num2 = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo((float)num);
                         int index = Projectile.NewProjectile(source, pos, vel, ModContent.ProjectileType<VictideSeaSnail>(), num2, 0f, Main.myPlayer, 0f, 0f);
                         if (Utils.IndexInRange<Projectile>(Main.projectile, index))

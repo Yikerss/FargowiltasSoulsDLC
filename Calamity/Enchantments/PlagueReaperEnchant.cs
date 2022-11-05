@@ -5,6 +5,9 @@ using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System;
+using CalamityMod;
+using CalamityMod.Projectiles.Rogue;
+using Terraria.DataStructures;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -52,27 +55,24 @@ Effects of Plague Hive, Plagued Fuel Pack, and The Camper");
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
 
-            calamity.Call("SetSetBonus", player, "plaguereaper", true);
+            CalamityMod.CalPlayer.CalamityPlayer player1 = player.Calamity();
+
+            player1.plagueReaper = true;
             //meme
-            if (player.whoAmI == Main.myPlayer && player.immune && Utils.NextBool(Main.rand, 10))
+            if (player.whoAmI == Main.myPlayer)
             {
-                for (int j = 0; j < 1; j++)
+                IEntitySource source = player.GetSource_Accessory(base.Item, null);
+                if (player.immune && ((player.miscCounter % 10) == 0))
                 {
-                    float num2 = player.position.X + (float)Main.rand.Next(-400, 400);
-                    float num3 = player.position.Y - (float)Main.rand.Next(500, 800);
-                    Vector2 vector = new Vector2(num2, num3);
-                    float num4 = player.position.X + (float)(player.width / 2) - vector.X;
-                    float num5 = player.position.Y + (float)(player.height / 2) - vector.Y;
-                    num4 += (float)Main.rand.Next(-100, 101);
-                    float num6 = (float)22;
-                    float num7 = (float)Math.Sqrt((double)(num4 * num4 + num5 * num5));
-                    num7 = num6 / num7;
-                    num4 *= num7;
-                    num5 *= num7;
-                    int num8 = Projectile.NewProjectile(player.GetSource_Misc(""),num2, num3, num4, num5, calamity.Find<ModProjectile>("TheSyringeCinder").Type, 40, 4f, player.whoAmI, 0f, 0f);
-                    Main.projectile[num8].ai[1] = player.position.Y;
+                    int damage = (int)player.GetTotalDamage<RangedDamageClass>().ApplyTo(40f);
+                    Projectile projectile = CalamityUtils.ProjectileRain(source, player.Center, 400f, 100f, 500f, 800f, 0x16f, ModContent.ProjectileType<TheSyringeCinder>(), damage, 4f, player.whoAmI);
+                    if (projectile.whoAmI.WithinBounds(0x3e8))
+                    {
+                        projectile.DamageType = DamageClass.Generic;
+                    }
                 }
             }
+
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PlagueHive))
             {
                 calamity.Find<ModItem>("PlagueHive").UpdateAccessory(player, hideVisual);

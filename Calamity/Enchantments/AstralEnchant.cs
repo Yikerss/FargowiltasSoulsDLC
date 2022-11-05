@@ -4,7 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-
+using CalamityMod.CalPlayer;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -52,10 +53,10 @@ Effects of the Astral Arcanum and Gravistar Sabaton");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!FargowiltasSoulsDLC.Instance.CalamityLoaded) return;
-
+            CalamityPlayer player1 = player.Calamity();
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AstralStars))
-                calamity.Call("SetSetBonus", player, "astral", true);
-            
+                player1.astralStarRain = true;
+
 
             calamity.Find<ModItem>("AstralArcanum").UpdateAccessory(player, hideVisual);
 

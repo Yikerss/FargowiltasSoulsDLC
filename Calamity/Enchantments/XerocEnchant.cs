@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CalamityMod;
 
 namespace FargowiltasSoulsDLC.Calamity.Enchantments
 {
@@ -53,7 +54,14 @@ Effects of The Community");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.XerocEffects))
             {
-                calamity.Call("SetSetBonus", player, "empyrean", true);
+                CalamityMod.CalPlayer.CalamityPlayer player1 = player.Calamity();
+                player1.xerocSet = true;
+
+                if (player.statLife <= (player.statLifeMax2 * 0.5))
+                {
+                    player.AddBuff(0x75, 2, true, false);
+                    player.AddBuff(0x73, 2, true, false);
+                }
             }
 
             //the community

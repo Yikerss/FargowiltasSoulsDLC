@@ -26,7 +26,8 @@ namespace FargowiltasSoulsDLC.Calamity.Enchantments
             Tooltip.SetDefault(
 @"'The world is your oyster'
 When using any weapon you have a 10% chance to throw a returning seashell projectile
-Summons multiple clams to protect you
+The clam will fight for you
+Summons some snails to fight for you
 Effects of Giant Pearl and Aquatic Emblem 
 Effects of Ocean's Crest and Luxor's Gift");
         }
@@ -59,7 +60,7 @@ Effects of Ocean's Crest and Luxor's Gift");
 
             if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ShellfishMinion))
             {
-
+                
                 player.Calamity().molluskSet = true;
                 player.maxMinions += 4;
                 if (player.whoAmI == Main.myPlayer)
