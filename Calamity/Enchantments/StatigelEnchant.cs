@@ -83,6 +83,7 @@ Effects of Counter Scarf, Mana Overloader, and Fungal Symbiote");
             recipe.AddIngredient(calamity.Find<ModItem>("CounterScarf").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("ManaOverloader").Type);
             recipe.AddIngredient(calamity.Find<ModItem>("FungalSymbiote").Type);
+            recipe.AddIngredient(calamity.Find<ModItem>("FungalClump").Type);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
